@@ -2,6 +2,9 @@ from bs4 import BeautifulSoup
 from urllib import request
 from datetime import datetime
 
+print(datetime.now())
+exit()
+
 # 抓取网页
 response = request.urlopen("http://fund.eastmoney.com/fund.html")
 html = response.read()
@@ -33,10 +36,15 @@ from common.config import dbconfig
 connection = pymysql.connect(**dbconfig)
 
 cursor = Cursor(connection)
+
+# cursor.execute("sql")
+# result = cursor.fetchall()
+
 cursor.executemany("""
 insert into myfund(fcode, fname, NAV, ACCNAV, updatetime)
 values(%(fcode)s,%(fname)s,%(NAV)s,%(ACCNAV)s,%(updatetime)s)
 ON duplicate KEY UPDATE `updatetime`=%(updatetime)s, NAV=%(NAV)s, ACCNAV=%(ACCNAV)s
 """, result)
+
 connection.commit()
 connection.close()
